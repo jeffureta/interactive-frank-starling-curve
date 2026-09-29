@@ -4,16 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frank-Starling Curve Simulation</title>
+  <title>Interactive Frank-Starling Curve</title>
   
   <!-- Materialize CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="grey lighten-4">
+
+  <!-- Google Style App Bar -->
+  <header class="app-bar z-depth-1">
+    <div class="app-bar-content container">
+      <i class="material-icons app-logo">show_chart</i>
+      <h1 class="app-title">Interactive Frank-Starling Curve</h1>
+    </div>
+  </header>
 
   <div class="container main-container">
     
@@ -62,6 +72,19 @@
       <!-- Controls Section -->
       <div class="controls-section">
         
+        <!-- Clinical Scenarios -->
+        <div class="scenarios-wrapper">
+          <span class="control-label">Clinical Scenarios</span>
+          <div class="chip-group" id="scenario-pills">
+            <button class="chip active" data-scenario="normal">Normal Baseline</button>
+            <button class="chip" data-scenario="hfpef">HFpEF</button>
+            <button class="chip" data-scenario="decompensated">Decompensated HF</button>
+            <button class="chip" data-scenario="crt">CRT Pacing</button>
+            <button class="chip" data-scenario="dobutamine">Dobutamine IV</button>
+            <button class="chip" data-scenario="custom" style="display: none;">Custom</button>
+          </div>
+        </div>
+
         <!-- Row 1: Patient Demographics & State -->
         <div class="row">
           <div class="col s6 m4 control-block">
@@ -77,8 +100,8 @@
             <div class="custom-select-wrapper">
               <select id="input-inotropy">
                 <option value="increased">Increased Inotropy</option>
-                <option value="normal">Normal State</option>
-                <option value="decreased" selected>Decreased (Heart failure)</option>
+                <option value="normal" selected>Normal State</option>
+                <option value="decreased">Decreased (Heart failure)</option>
               </select>
             </div>
           </div>
@@ -90,8 +113,8 @@
           <div class="col s12 m6 control-block">
             <label class="control-label">End-Diastolic Volume (Preload)</label>
             <div class="slider-wrapper">
-              <input type="range" id="input-edv" min="10" max="250" value="65" class="custom-range" />
-              <span class="slider-value"><span id="disp-edv">65</span> mL</span>
+              <input type="range" id="input-edv" min="10" max="250" value="130" class="custom-range" />
+              <span class="slider-value"><span id="disp-edv">130</span> mL</span>
             </div>
             <span class="normal-range-hint" id="hint-edv">Normal: 109–182 mL</span>
           </div>
@@ -100,11 +123,20 @@
           <div class="col s12 m6 control-block">
             <label class="control-label">Mean Arterial Pressure (Afterload)</label>
             <div class="slider-wrapper">
-              <input type="range" id="input-map" min="40" max="160" value="60" class="custom-range" />
-              <span class="slider-value"><span id="disp-map">60</span> mmHg</span>
+              <input type="range" id="input-map" min="40" max="160" value="90" class="custom-range" />
+              <span class="slider-value"><span id="disp-map">90</span> mmHg</span>
             </div>
             <span class="normal-range-hint" id="hint-map">Normal: 70–100 mmHg</span>
           </div>
+        </div>
+
+        <!-- Dynamic Clinical Insight Card -->
+        <div class="insight-card" id="insight-card">
+          <div class="insight-header">
+            <i class="material-icons">lightbulb_outline</i>
+            <span id="insight-title">Healthy Physiology</span>
+          </div>
+          <p id="insight-text">The heart is filling adequately and contracting with enough intrinsic force to supply the body with highly efficient, synchronized strokes.</p>
         </div>
 
       </div>

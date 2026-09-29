@@ -2,17 +2,51 @@
 body {
   font-family: 'Roboto', -apple-system, sans-serif;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   min-height: 100vh;
   margin: 0;
   background-color: #f8f9fa !important;
 }
 
+/* Google App Bar */
+.app-bar {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dadce0;
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-bar-content {
+  display: flex;
+  align-items: center;
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+.app-logo {
+  color: #1a73e8;
+  font-size: 28px;
+  margin-right: 12px;
+}
+
+.app-title {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: #5f6368;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
 .main-container {
   width: 100%;
   max-width: 940px;
-  padding: 16px;
+  padding: 24px 16px;
+  flex: 1;
 }
 
 .main-ui-card {
@@ -138,6 +172,46 @@ canvas {
   line-height: 1.3;
 }
 
+/* Clinical Scenario Chips */
+.scenarios-wrapper {
+  margin-bottom: 24px;
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0 16px;
+  height: 32px;
+  line-height: 30px; 
+  border-radius: 16px;
+  border: 1px solid #dadce0;
+  background-color: #ffffff;
+  color: #3c4043;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chip:hover {
+  background-color: #f1f3f4;
+}
+
+.chip.active {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  border-color: #1a73e8;
+}
+
 /* Custom Number Inputs */
 .custom-number-input {
   background-color: #e8eaed !important;
@@ -158,7 +232,7 @@ canvas {
   box-shadow: 0 0 0 2px #1a73e8 inset !important;
 }
 
-/* Slider Controls & Removal of Materialize Bubble Artifact */
+/* Slider Controls */
 .slider-wrapper {
   display: flex;
   align-items: center;
@@ -224,7 +298,7 @@ canvas {
   min-width: 65px;
 }
 
-/* Custom Select Dropdown (Materialize Override) */
+/* Custom Select Dropdown */
 .custom-select-wrapper {
   position: relative;
   margin-top: 0;
@@ -273,7 +347,50 @@ canvas {
   font-size: 0.875rem;
 }
 
+/* Educational Insight Card */
+.insight-card {
+  background-color: #e8f0fe;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 12px;
+  border: 1px solid #d2e3fc;
+}
+
+.insight-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1a73e8;
+  margin-bottom: 6px;
+}
+
+.insight-header i {
+  font-size: 1.2rem;
+}
+
+.insight-header span {
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.insight-card p {
+  color: #3c4043;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
 @media (max-width: 600px) {
+  .app-bar {
+    padding: 12px 16px;
+  }
+  .app-title {
+    font-size: 1.15rem;
+  }
+  .main-container {
+    padding: 16px 8px;
+  }
   .graph-section {
     padding: 20px 15px 15px 15px;
   }

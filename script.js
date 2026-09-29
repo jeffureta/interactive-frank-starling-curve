@@ -22,6 +22,11 @@ document.addEventListener('DOMContentLoaded', function() {
   const valBSA = document.getElementById('val-bsa');
   const hintEDV = document.getElementById('hint-edv');
 
+  const scenarioPills = document.querySelectorAll('.chip');
+  const insightTitle = document.getElementById('insight-title');
+  const insightText = document.getElementById('insight-text');
+  const materializeSelectInstance = M.FormSelect.getInstance(inputInotropy);
+
   // Mathematical Parameters for the raw Stroke Volume curves
   const curveParams = {
     increased: { vmax: 180, km: 60, color: '#a5d6a7', activeColor: '#2e7d32', label: 'Increased Inotropy' },
@@ -30,6 +35,35 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   const fixedHR = 73;
+
+  // Clinical Scenario Definitions & Insights
+  const scenarios = {
+    normal: {
+      edv: 130, map: 90, inotropy: 'normal',
+      title: 'Healthy Physiology',
+      text: 'The heart is filling adequately and contracting with enough intrinsic force to supply the body with highly efficient, synchronized strokes.'
+    },
+    hfpef: {
+      edv: 60, map: 90, inotropy: 'decreased',
+      title: 'The HFpEF Trap (Preserved EF)',
+      text: 'The stiff ventricle cannot stretch to fill properly. Because the "tank" is empty, Cardiac Output plummets. However, the Ejection Fraction ratio remains mathematically "normal" (≥ 50%) because the heart is still squeezing out a normal percentage of the abnormally tiny amount of blood it received.'
+    },
+    decompensated: {
+      edv: 240, map: 100, inotropy: 'decreased',
+      title: 'Decompensated Heart Failure',
+      text: 'The failing ventricle is severely overstretched and volume overloaded. Operating on the flat plateau of the Starling curve, excess fluid causes pulmonary congestion instead of increasing cardiac output. The patient requires diuretics and afterload reduction, not volume.'
+    },
+    crt: {
+      edv: 150, map: 75, inotropy: 'normal',
+      title: 'Cardiac Resynchronization Therapy (CRT)',
+      text: 'Like synchronizing a rowing team, CRT physically coordinates the contraction of both ventricles. This pulls a failing, dyssynchronous heart back up toward a normal Starling curve, improving output safely without chemically spiking the cellular oxygen demand.'
+    },
+    dobutamine: {
+      edv: 130, map: 65, inotropy: 'increased',
+      title: 'Chemical Inotropes (Dobutamine)',
+      text: 'Like whipping a tired horse, Dobutamine forces the failing muscle to squeeze with much greater force. This successfully drives up Stroke Volume to rescue the patient, but rapidly accelerates exhaustion by massively increasing myocardial oxygen demand.'
+    }
+  };
 
   function resizeCanvas() {
     const rect = canvas.parentElement.getBoundingClientRect();
@@ -55,7 +89,11 @@ document.addEventListener('DOMContentLoaded', function() {
     return Math.max(0, sv);
   }
 
-  function updateSimulation() {
+  function updateSimulation(isManual = false) {
+    if (isManual) {
+      setCustomScenario();
+    }
+
     const edv = parseFloat(inputEDV.value);
     const map = parseFloat(inputMAP.value);
     const height = parseFloat(inputHeight.value) || 170;
@@ -99,6 +137,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
     drawGraph(edv, svi, state, map, bsa);
   }
+
+  function setCustomScenario() {
+    scenarioPills.forEach(p => p.classList.remove('active'));
+    document.querySelector('.chip[data-scenario="custom"]').style.display = 'inline-flex';
+    document.querySelector('.chip[data-scenario="custom"]').classList.add('active');
+    
+    insightTitle.textContent = 'Custom Evaluation';
+    insightText.textContent = 'Adjust the parameters above to dynamically map the patient\'s position on the Frank-Starling curve.';
+  }
+
+  function applyScenario(scenarioKey) {
+    const data = scenarios[scenarioKey];
+    if (!data) return;
+
+    // Update active pill styling
+    scenarioPills.forEach(p => p.classList.remove('active'));
+    document.querySelector(`.chip[data-scenario="${scenarioKey}"]`).classList.add('active');
+    document.querySelector('.chip[data-scenario="custom"]').style.display = 'none';
+
+    // Set input values
+    inputEDV.value = data.edv;
+    inputMAP.value = data.map;
+    inputInotropy.value = data.inotropy;
+    
+    // Re-initialize Materialize select to reflect the new value visually
+    M.FormSelect.init(inputInotropy);
+
+    // Update insight card
+    insightTitle.textContent = data.title;
+    insightText.textContent = data.text;
+
+    updateSimulation(false);
+  }
+
+  // Setup Scenario Click Listeners
+  scenarioPills.forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      const key = e.target.getAttribute('data-scenario');
+      if (key !== 'custom') {
+        applyScenario(key);
+      }
+    });
+  });
 
   function drawGraph(activeEDV, activeSVI, activeState, currentMAP, bsa) {
     const width = canvas.clientWidth;
@@ -228,12 +309,16 @@ document.addEventListener('DOMContentLoaded', function() {
     ctx.stroke();
   }
 
-  // Event Listeners
-  inputEDV.addEventListener('input', updateSimulation);
-  inputMAP.addEventListener('input', updateSimulation);
-  inputInotropy.addEventListener('change', updateSimulation);
-  inputHeight.addEventListener('input', updateSimulation);
-  inputWeight.addEventListener('input', updateSimulation);
+  // Event Listeners (Triggers Manual Mode)
+  inputEDV.addEventListener('input', () => updateSimulation(true));
+  inputMAP.addEventListener('input', () => updateSimulation(true));
+  inputInotropy.addEventListener('change', () => updateSimulation(true));
+  inputHeight.addEventListener('input', () => updateSimulation(true));
+  inputWeight.addEventListener('input', () => updateSimulation(true));
 
-  setTimeout(resizeCanvas, 80);
+  // Initialize
+  setTimeout(() => {
+    resizeCanvas();
+    applyScenario('normal'); // Boot up in normal state
+  }, 80);
 });
